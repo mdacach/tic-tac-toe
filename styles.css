@@ -1,0 +1,20 @@
+.container {
+    width: 480px;
+    height: 480px;
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr;
+    border: lightgrey 1.5px solid;
+}
+
+.cell {
+    border: lightgrey 0.5px solid;
+    background-color: rgb(234, 247, 247);
+}
+
+.x-cell {
+    background-image: url("images/x.png");
+}
+
+.o-cell {
+    background-image: url("images/o.png");
+}
