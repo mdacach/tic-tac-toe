@@ -50,23 +50,44 @@ for (let i = 0; i < cells.length; i++){
 let turn = 'x'; 
 let winner = '';
 
+function addWinnerText () {
+    winner = checkGame();
+    let winnerText = document.createElement('h2');
+    winnerText.classList.add('winner-text');
+    winnerText.textContent = winner + ' won!';
+    textContainer.appendChild(winnerText);winner = checkGame();
+}
+
+function addDrawText () {
+    winner = 'draw'; 
+    console.log('it is a draw!');
+    let winnerText = document.createElement('h2');
+    winnerText.classList.add('winner-text');
+    winnerText.textContent = 'it was a draw!';
+    textContainer.appendChild(winnerText);
+}
+
+function addNewGameButton () {
+    let newGameButton = document.createElement('button');
+    newGameButton.classList.add('new-game-button');
+    newGameButton.textContent = 'new game';
+    textContainer.appendChild(newGameButton);
+
+    newGameButton.addEventListener('click', function (e) {
+        window.location.reload();
+    });
+    
+}
+
 function updateGame() {
     if (checkGame()) {
-        winner = checkGame();
-        console.log('we have a winner', winner);
-        let winnerText = document.createElement('h2');
-        winnerText.classList.add('winner-text');
-        winnerText.textContent = winner + ' won!';
-        textContainer.appendChild(winnerText);
+        addWinnerText();
+        addNewGameButton();
     }
     else {
         if (checkDraw ()) {
-            winner = 'draw'; 
-            console.log('it is a draw!');
-            let winnerText = document.createElement('h2');
-            winnerText.classList.add('winner-text');
-            winnerText.textContent = 'it was a draw!';
-            textContainer.appendChild(winnerText);
+            addDrawText();
+            addNewGameButton();
         }
     }
 }
