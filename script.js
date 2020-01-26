@@ -1,51 +1,72 @@
 const container = document.querySelector('.container');
+const textContainer = document.querySelector('.text-container');
 
+// create a 2d array from cells
 let cellsGrid = [];
 for (let row = 0; row < 3; row++){
     let elts = [];
     for (let col = 0; col < 3; col++){
         const div = document.createElement('div');
         div.classList.add('cell');
-        div.setAttribute('row', row);
-        div.setAttribute('col', col);
         container.appendChild(div);
-        // console.log(container);
         elts.push(div);
     }
     cellsGrid.push(elts);
 }
 
 const cells = document.querySelectorAll('.cell');
+cellsArr = Array.from(cells);
 
 for (let i = 0; i < cells.length; i++){
     cells[i].addEventListener('contextmenu', function(e) {
-        if (!e.target.classList.contains('active')){
+        if (turn !== 'o' || winner) {
+            e.preventDefault();
+            return; 
+        }
+        if (!e.target.classList.contains('active')){ // if it's not already active
             e.preventDefault();
             e.target.classList.add('o-cell');
             e.target.classList.add('active');
-            update();
+            turn = 'x';
+            updateGame();
         }
         else e.preventDefault();
     });
     cells[i].addEventListener('click', function(e) {
+        if (turn !== 'x' || winner) {
+            e.preventDefault();
+            return; 
+        } 
         if (!e.target.classList.contains('active')) {
             e.target.classList.add('x-cell');
             e.target.classList.add('active');
-            update();
+            turn = 'o';
+            updateGame();
         }
         else e.preventDefault();
     });
 }
 
-cellsArr = Array.from(cells);
+let turn = 'x'; 
+let winner = '';
 
-function update() {
+function updateGame() {
     if (checkGame()) {
-        console.log('we have a winner', checkGame());
+        winner = checkGame();
+        console.log('we have a winner', winner);
+        let winnerText = document.createElement('h2');
+        winnerText.classList.add('winner-text');
+        winnerText.textContent = winner + ' won!';
+        textContainer.appendChild(winnerText);
     }
     else {
         if (checkDraw ()) {
+            winner = 'draw'; 
             console.log('it is a draw!');
+            let winnerText = document.createElement('h2');
+            winnerText.classList.add('winner-text');
+            winnerText.textContent = 'it was a draw!';
+            textContainer.appendChild(winnerText);
         }
     }
 }
@@ -60,6 +81,7 @@ function checkDraw () {
 }
 
 function checkGame () {
+
     function checkWinner (array) {
         if (array.every((cell) => cell.classList.contains('x-cell'))) {
             return 'x';
@@ -112,28 +134,6 @@ function checkGame () {
     }
 
     return false; 
-
-    // checkDraw();
-
 }
 
-function getX () {
-    return cellsArr.filter((cell) => cell.classList.contains('x-cell'));
-}
 
-function getO () {
-    return cellsArr.filter((cell) => cell.classList.contains('o-cell'));
-}
-
-function getRow (cell) {
-    return cell.getAttribute('row');
-}
-
-function getCol (cell) {
-    return cell.getAttribute('col');
-}
-
-setInterval(checkGame, 1000);
-
-checkButton = document.getElementById('check');
-checkButton.addEventListener('click', checkGame);
