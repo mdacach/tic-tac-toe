@@ -1,7 +1,6 @@
 const container = document.querySelector('.container');
+
 let cellsGrid = [];
-
-
 for (let row = 0; row < 3; row++){
     let elts = [];
     for (let col = 0; col < 3; col++){
@@ -16,10 +15,6 @@ for (let row = 0; row < 3; row++){
     cellsGrid.push(elts);
 }
 
-console.table(cellsGrid);
-console.log(cellsGrid[0][0]);
-console.log(cellsGrid[0][1]);
-
 const cells = document.querySelectorAll('.cell');
 
 for (let i = 0; i < cells.length; i++){
@@ -28,6 +23,7 @@ for (let i = 0; i < cells.length; i++){
             e.preventDefault();
             e.target.classList.add('o-cell');
             e.target.classList.add('active');
+            update();
         }
         else e.preventDefault();
     });
@@ -35,6 +31,7 @@ for (let i = 0; i < cells.length; i++){
         if (!e.target.classList.contains('active')) {
             e.target.classList.add('x-cell');
             e.target.classList.add('active');
+            update();
         }
         else e.preventDefault();
     });
@@ -42,68 +39,82 @@ for (let i = 0; i < cells.length; i++){
 
 cellsArr = Array.from(cells);
 
-function checkCells () {
-    console.clear();
-    for (let i = 0; i < cellsArr.length; i++){
-        console.log(cellsArr[i].classList);
-        console.log(getRow(cellsArr[i]), 
-                getCol(cellsArr[i]));
-
+function update() {
+    if (checkGame()) {
+        console.log('we have a winner', checkGame());
     }
+    else {
+        if (checkDraw ()) {
+            console.log('it is a draw!');
+        }
+    }
+}
+
+function checkDraw () {
     function isActive (cell) {
         return cell.classList.contains('active');
     }
 
+    return cellsArr.every(isActive);
+
 }
 
 function checkGame () {
-    console.clear();
-    let xCells = getX(cellsArr);
-    let oCells = getO(cellsArr);
-    console.log('x: ', xCells);
-    xCells.forEach((cell) => console.log(`${getRow(cell)}, ${getCol(cell)}`));
-    console.log('o: ', oCells);
-    oCells.forEach((cell) => console.log(`${getRow(cell)}, ${getCol(cell)}`));
-    console.log(cellsArr.slice(0, 3));
-    checkRows();
-}
+    function checkWinner (array) {
+        if (array.every((cell) => cell.classList.contains('x-cell'))) {
+            return 'x';
+        }
+        if (array.every((cell) => cell.classList.contains('o-cell'))) {
+            return 'o';
+        }
+        return false; 
+    }
 
-function checkRows () {
-    // checking the rows of grid
+    // check rows 
     for (let row = 0; row < 3; row++){
         let currentRow = cellsGrid[row];
-        // console.log('checking row ', row);
-        // console.log('checking x: ');
-        console.log(currentRow.every((cell) => cell.classList.contains('x-cell')));
-        // console.log('checking o: ');
-        console.log(currentRow.every((cell) => cell.classList.contains('o-cell')));
-    }
-
-    // checking the columns of grid
-    for (let col = 0; col < 3; col++){
-        let currentColumn = [];
-        for (let row = 0; row < 3; row++){
-            currentColumn.push(cellsGrid[row][col]);
+        if (checkWinner (currentRow)) {
+            return winner = checkWinner(currentRow);
+            console.log('row winner is ', winner);
         }
-        // console.log('checking col ', col);
-        console.log(currentColumn.every((cell) => cell.classList.contains('x-cell')));
-        console.log(currentColumn.every((cell) => cell.classList.contains('o-cell')));
     }
 
-    // checking the principal diagonal
-    let principalDiag = []; 
+    // check cols 
+    for (let col = 0; col < 3; col++){
+        let currentCol = [];
+        for (let row = 0; row < 3; row++){
+            currentCol.push(cellsGrid[row][col]);
+        }
+        if (checkWinner (currentCol)) {
+            return winner = checkWinner(currentCol);
+            console.log('col winner is ', winner )
+        }
+    }
+
+    // check principal diag
+    let principalDiag = [];
     for (let diag = 0; diag < 3; diag++){
         principalDiag.push(cellsGrid[diag][diag]);
     }
-    console.log(principalDiag.every((cell) => cell.classList.contains('x-cell')));
-    console.log(principalDiag.every((cell) => cell.classList.contains('o-cell')));
+    if (checkWinner(principalDiag)) {
+        return winner = checkWinner(principalDiag);
+        console.log('diag winner is ', winner);
+    }
 
+    // check secondary diag
     let secondaryDiag = [];
     for (let row = 0; row < 3; row++){
         secondaryDiag.push(cellsGrid[row][2 - row]);
     }
-    console.log(secondaryDiag.every((cell) => cell.classList.contains('x-cell')));
-    console.log(secondaryDiag.every((cell) => cell.classList.contains('o-cell')));
+    if (checkWinner(secondaryDiag)) {
+        return winner = checkWinner(secondaryDiag);
+        console.log('secondary diag winner is ', winner);
+    }
+
+    return false; 
+
+    // checkDraw();
+
 }
 
 function getX () {
@@ -122,7 +133,7 @@ function getCol (cell) {
     return cell.getAttribute('col');
 }
 
-
+setInterval(checkGame, 1000);
 
 checkButton = document.getElementById('check');
 checkButton.addEventListener('click', checkGame);
