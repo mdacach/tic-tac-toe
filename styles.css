@@ -23,11 +23,19 @@ h1 {
 }
 
 .x-cell {
-    background-image: url("images/x.png");
+    background-image: url("images/gimp/x.png");
 }
 
 .o-cell {
-    background-image: url("images/o.png");
+    background-image: url("images/gimp/o.png");
+}
+
+.x-winner {
+    background-image: url("images/gimp/red-x.png");
+}
+
+.o-winner {
+    background-image: url("images/gimp/red-o.png");
 }
 
 .text-container {

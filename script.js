@@ -113,12 +113,20 @@ function checkGame () {
         return false; 
     }
 
+    function addWinnerClass (array, winner) {
+        for (let i = 0; i < array.length; i++){
+            array[i].classList.add(winner + '-winner');
+        }
+
+    }
+
     // check rows 
     for (let row = 0; row < 3; row++){
         let currentRow = cellsGrid[row];
         if (checkWinner (currentRow)) {
-            return winner = checkWinner(currentRow);
-            console.log('row winner is ', winner);
+            winner = checkWinner(currentRow);
+            addWinnerClass(currentRow, winner);
+            return winner; 
         }
     }
 
@@ -129,8 +137,9 @@ function checkGame () {
             currentCol.push(cellsGrid[row][col]);
         }
         if (checkWinner (currentCol)) {
-            return winner = checkWinner(currentCol);
-            console.log('col winner is ', winner )
+            winner = checkWinner(currentCol);
+            addWinnerClass(currentCol, winner);
+            return winner; 
         }
     }
 
@@ -140,8 +149,9 @@ function checkGame () {
         principalDiag.push(cellsGrid[diag][diag]);
     }
     if (checkWinner(principalDiag)) {
-        return winner = checkWinner(principalDiag);
-        console.log('diag winner is ', winner);
+        winner = checkWinner(principalDiag);
+        addWinnerClass(principalDiag, winner);
+        return winner; 
     }
 
     // check secondary diag
@@ -150,8 +160,9 @@ function checkGame () {
         secondaryDiag.push(cellsGrid[row][2 - row]);
     }
     if (checkWinner(secondaryDiag)) {
-        return winner = checkWinner(secondaryDiag);
-        console.log('secondary diag winner is ', winner);
+        winner = checkWinner(secondaryDiag);
+        addWinnerClass(secondaryDiag, winner);
+        return winner; 
     }
 
     return false; 
