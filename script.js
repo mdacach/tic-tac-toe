@@ -1,50 +1,75 @@
-const container = document.querySelector('.container');
-const textContainer = document.querySelector('.text-container');
+const gameBoard = (() => {
+    const container = document.querySelector('.container');
+    const textContainer = document.querySelector('.text-container');
 
-// create a 2d array from cells
-let cellsGrid = [];
-for (let row = 0; row < 3; row++){
-    let elts = [];
-    for (let col = 0; col < 3; col++){
-        const div = document.createElement('div');
-        div.classList.add('cell');
-        container.appendChild(div);
-        elts.push(div);
-    }
-    cellsGrid.push(elts);
-}
+    let cellsGrid = [];
+    // private functions 
+    function constructGrid(){
+    // construct the cells and put them in a 2D array
+        for (let row = 0; row < 3; row++){
+            let elts = [];
+            for (let col = 0; col < 3; col++){
+                const div = document.createElement('div');
+                div.classList.add('cell');
+                container.appendChild(div);
+                elts.push(div);
+            }
+            cellsGrid.push(elts);
+        }
+    };    
 
-const cells = document.querySelectorAll('.cell');
+    function addClickFunctions(cell) {
+    // add left click for 'x' event
+        cell.addEventListener('click', function(e) {
+            if (turn !== 'x' || winner) {
+                e.preventDefault();
+                return; 
+            } 
+            if (!e.target.classList.contains('active')) {
+                e.target.classList.add('x-cell');
+                e.target.classList.add('active');
+                turn = 'o';
+                updateGame();
+            }
+            else e.preventDefault();
+        });
 
-for (let i = 0; i < cells.length; i++){
-    cells[i].addEventListener('contextmenu', function(e) {
-        if (turn !== 'o' || winner) {
-            e.preventDefault();
-            return; 
+        // add right click for 'o' event 
+        cell.addEventListener('contextmenu', function(e) {
+            if (turn !== 'o' || winner) {
+                e.preventDefault();
+                return; 
+            }
+            if (!e.target.classList.contains('active')){ // if it's not already active
+                e.preventDefault();
+                e.target.classList.add('o-cell');
+                e.target.classList.add('active');
+                turn = 'x';
+                updateGame();
+            }
+            else e.preventDefault();
+        });
+    };
+
+    // public functions 
+    function start() {
+        constructGrid();
+        for (let i = 0; i < 3; i++){
+            for (let j = 0; j < 3; j++){
+                addClickFunctions(cellsGrid[i][j]);
+            }
         }
-        if (!e.target.classList.contains('active')){ // if it's not already active
-            e.preventDefault();
-            e.target.classList.add('o-cell');
-            e.target.classList.add('active');
-            turn = 'x';
-            updateGame();
-        }
-        else e.preventDefault();
-    });
-    cells[i].addEventListener('click', function(e) {
-        if (turn !== 'x' || winner) {
-            e.preventDefault();
-            return; 
-        } 
-        if (!e.target.classList.contains('active')) {
-            e.target.classList.add('x-cell');
-            e.target.classList.add('active');
-            turn = 'o';
-            updateGame();
-        }
-        else e.preventDefault();
-    });
-}
+    };
+
+    return {
+        container,
+        textContainer,
+        cellsGrid,
+        start,
+    };
+})();
+
+gameBoard.start(); 
 
 let turn = 'x'; 
 let winner = '';
@@ -54,7 +79,7 @@ function addWinnerText () {
     let winnerText = document.createElement('h2');
     winnerText.classList.add('winner-text');
     winnerText.textContent = winner + ' won!';
-    textContainer.appendChild(winnerText);winner = checkGame();
+    gameBoard.textContainer.appendChild(winnerText);winner = checkGame();
 }
 
 function addDrawText () {
@@ -63,14 +88,14 @@ function addDrawText () {
     let winnerText = document.createElement('h2');
     winnerText.classList.add('winner-text');
     winnerText.textContent = 'it was a draw!';
-    textContainer.appendChild(winnerText);
+    gameBoard.textContainer.appendChild(winnerText);
 }
 
 function addNewGameButton () {
     let newGameButton = document.createElement('button');
     newGameButton.classList.add('new-game-button');
     newGameButton.textContent = 'new game';
-    textContainer.appendChild(newGameButton);
+    gameBoard.textContainer.appendChild(newGameButton);
 
     newGameButton.addEventListener('click', function (e) {
         window.location.reload();
@@ -96,7 +121,7 @@ function checkDraw () {
         return cell.classList.contains('active');
     }
 
-    return cellsGrid.every((array) => array.every(isActive));
+    return gameBoard.cellsGrid.every((array) => array.every(isActive));
 
 }
 
@@ -121,7 +146,7 @@ function checkGame () {
 
     // check rows 
     for (let row = 0; row < 3; row++){
-        let currentRow = cellsGrid[row];
+        let currentRow = gameBoard.cellsGrid[row];
         if (checkWinner (currentRow)) {
             winner = checkWinner(currentRow);
             addWinnerClass(currentRow, winner);
@@ -133,7 +158,7 @@ function checkGame () {
     for (let col = 0; col < 3; col++){
         let currentCol = [];
         for (let row = 0; row < 3; row++){
-            currentCol.push(cellsGrid[row][col]);
+            currentCol.push(gameBoard.cellsGrid[row][col]);
         }
         if (checkWinner (currentCol)) {
             winner = checkWinner(currentCol);
@@ -145,7 +170,7 @@ function checkGame () {
     // check principal diag
     let principalDiag = [];
     for (let diag = 0; diag < 3; diag++){
-        principalDiag.push(cellsGrid[diag][diag]);
+        principalDiag.push(gameBoard.cellsGrid[diag][diag]);
     }
     if (checkWinner(principalDiag)) {
         winner = checkWinner(principalDiag);
@@ -156,7 +181,7 @@ function checkGame () {
     // check secondary diag
     let secondaryDiag = [];
     for (let row = 0; row < 3; row++){
-        secondaryDiag.push(cellsGrid[row][2 - row]);
+        secondaryDiag.push(gameBoard.cellsGrid[row][2 - row]);
     }
     if (checkWinner(secondaryDiag)) {
         winner = checkWinner(secondaryDiag);
