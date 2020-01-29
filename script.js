@@ -15,7 +15,6 @@ for (let row = 0; row < 3; row++){
 }
 
 const cells = document.querySelectorAll('.cell');
-cellsArr = Array.from(cells);
 
 for (let i = 0; i < cells.length; i++){
     cells[i].addEventListener('contextmenu', function(e) {
@@ -97,7 +96,7 @@ function checkDraw () {
         return cell.classList.contains('active');
     }
 
-    return cellsArr.every(isActive);
+    return cellsGrid.every((array) => array.every(isActive));
 
 }
 
