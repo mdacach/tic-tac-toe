@@ -184,23 +184,35 @@ const gameFlow = (() => {
         else {
             cell.classList.add(marker + '-cell');
             cell.classList.add('active');
-            if (marker === 'x') gameFlow.turn = 'o';
-            else if (marker === 'o') gameFlow.turn = 'x';
-            gameFlow.updateGame();
+            gameFlow.updateGame(marker);
         }
     };
 
-    function updateGame() {
+    function updateGame(turn) {
         if (checkGame()) {
             displayController.addWinnerText();
             displayController.addNewGameButton();
+            return; 
         }
         else {
             if (checkDraw ()) {
                 displayController.addDrawText();
                 displayController.addNewGameButton();
+                return; 
             }
         }
+
+        if (turn === 'x') {
+        // testing the computer play
+            gameFlow.turn = 'o';
+            computerModule.play();
+            gameFlow.turn = 'x';
+        }
+        else if (turn === 'o') 
+            gameFlow.turn = 'x';
+
+
+
     };
 
     return {
@@ -212,6 +224,46 @@ const gameFlow = (() => {
 })(); 
 
 gameBoard.start(); 
+
+const computerModule = (() => {
+
+    function getAvailable() {
+        let available = [];
+        for (let i = 0; i < 3; i++){
+            for (let j = 0; j < 3; j++){
+                if (!gameBoard.cellsGrid[i][j].classList.contains('active')){
+                    available.push(gameBoard.cellsGrid[i][j]);
+                }
+            }
+        }
+        return available; 
+    };
+
+    function getRandom(array) {
+        let len = array.length;
+        let rn = Math.random();
+        rn = Math.floor(rn * len);
+        return array[rn];
+    }
+
+    function play() {
+        let available = getAvailable();
+        if (available.length === 0){
+            gameFlow.updateGame('o');
+            return; 
+        }
+        let randomCell = getRandom(available);
+        gameFlow.markCell(randomCell, 'o');
+
+    }
+
+    return {
+        play,
+    };
+
+})();
+
+
 
 
 
