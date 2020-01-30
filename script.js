@@ -18,36 +18,18 @@ const gameBoard = (() => {
         }
     };    
 
+
     function addClickFunctions(cell) {
     // add left click for 'x' event
         cell.addEventListener('click', function(e) {
-            if (gameFlow.turn !== 'x' || gameFlow.winner) {
-                e.preventDefault();
-                return; 
-            } 
-            if (!e.target.classList.contains('active')) {
-                e.target.classList.add('x-cell');
-                e.target.classList.add('active');
-                gameFlow.turn = 'o';
-                gameFlow.updateGame();
-            }
-            else e.preventDefault();
+            e.preventDefault();
+            gameFlow.markCell(e.target, 'x');
         });
 
         // add right click for 'o' event 
         cell.addEventListener('contextmenu', function(e) {
-            if (gameFlow.turn !== 'o' || gameFlow.winner) {
-                e.preventDefault();
-                return; 
-            }
-            if (!e.target.classList.contains('active')){ // if it's not already active
-                e.preventDefault();
-                e.target.classList.add('o-cell');
-                e.target.classList.add('active');
-                gameFlow.turn = 'x';
-                gameFlow.updateGame();
-            }
-            else e.preventDefault();
+            e.preventDefault();
+            gameFlow.markCell(e.target, 'o');
         });
     };
 
@@ -110,6 +92,8 @@ const displayController = (() => {
 const gameFlow = (() => {
     let turn = 'x'; 
     let winner = ''; 
+
+
 
     // private functions 
     function checkDraw () {
@@ -190,6 +174,22 @@ const gameFlow = (() => {
     };
 
     // public functions
+
+    function markCell(cell, marker){
+        // mark cells if they are not active, the turn is correct and there is no winner yet
+        if (cell.classList.contains('active') || gameFlow.turn !== marker || gameFlow.winner){
+            // do not mark the cell
+            return; 
+        }
+        else {
+            cell.classList.add(marker + '-cell');
+            cell.classList.add('active');
+            if (marker === 'x') gameFlow.turn = 'o';
+            else if (marker === 'o') gameFlow.turn = 'x';
+            gameFlow.updateGame();
+        }
+    };
+
     function updateGame() {
         if (checkGame()) {
             displayController.addWinnerText();
@@ -206,6 +206,7 @@ const gameFlow = (() => {
     return {
         turn,
         winner,
+        markCell,
         updateGame,
     };
 })(); 
