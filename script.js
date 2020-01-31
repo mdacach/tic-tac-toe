@@ -93,10 +93,13 @@ const gameFlow = (() => {
     let turn = 'x'; 
     let winner = ''; 
 
-
-
+    let playComputer = false; 
+    let userInput = prompt('would you like to play against the computer? (y/n)');
+    console.log(playComputer);
+    if (userInput == 'y') playComputer = true;
+    console.log(playComputer);
     // private functions 
-    function checkDraw () {
+    function checkDraw() {
         function isActive (cell) {
             return cell.classList.contains('active');
         }
@@ -106,7 +109,7 @@ const gameFlow = (() => {
         };
     };
 
-    function checkGame () {
+    function checkGame() {
 
         function checkWinner (array) {
             if (array.every((cell) => cell.classList.contains('x-cell'))) {
@@ -188,7 +191,7 @@ const gameFlow = (() => {
         }
     };
 
-    function updateGame(turn) {
+    function updateGame(previousTurn) {
         if (checkGame()) {
             displayController.addWinnerText();
             displayController.addNewGameButton();
@@ -202,13 +205,16 @@ const gameFlow = (() => {
             }
         }
 
-        if (turn === 'x') {
-        // testing the computer play
-            gameFlow.turn = 'o';
-            computerModule.play();
-            gameFlow.turn = 'x';
+        if (previousTurn === 'x') {
+            // if playing against computer
+            if (playComputer) {
+                gameFlow.turn = 'o';
+                computerModule.play();
+                gameFlow.turn = 'x';
+            }
+            else gameFlow.turn = 'o';
         }
-        else if (turn === 'o') 
+        else if (previousTurn === 'o') 
             gameFlow.turn = 'x';
 
 
